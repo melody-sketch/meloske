@@ -130,8 +130,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "100%",
     },
     container: {
-      minHeight: 600,
-      maxHeight: 600,
+      minHeight: 465,
+      maxHeight: 465,
     },
     paper: {
       width: "100%",
