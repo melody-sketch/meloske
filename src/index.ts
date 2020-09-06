@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import Store from "electron-store";
-import { copydir, FILE_EVENTS, readdirRecursive } from "./fileIO";
+import { copydir, FILE_EVENTS, readdirRecursiveSync } from "./fileIO";
 
 const DEFAULT_LIBRARY_DIR: string = "./library";
 const HTML_PATH: string = `file://${__dirname}/scripts/index.html`;
@@ -34,14 +34,14 @@ function createWindow() {
   win.webContents.openDevTools();
 
   win.webContents.on("did-finish-load", () => {
-    const libFiles = readdirRecursive(libraryDir);
+    const libFiles = readdirRecursiveSync(libraryDir);
     console.log("lib files:", libFiles);
     win!.webContents.send(FILE_EVENTS.READ_DIR, libFiles);
   });
 
   ipcMain.on(FILE_EVENTS.READ_DIR, (_) => {
     if (win === null) return;
-    const libFiles = readdirRecursive(libraryDir);
+    const libFiles = readdirRecursiveSync(libraryDir);
     win.webContents.send(FILE_EVENTS.READ_DIR, libFiles);
   });
 
@@ -57,7 +57,7 @@ function createWindow() {
 
     copydir(dirs[0], libraryDir);
     console.log("open_dir_dialog:", dirs);
-    const libFiles = readdirRecursive(libraryDir);
+    const libFiles = readdirRecursiveSync(libraryDir);
     win.webContents.send("add_dir_to_library", libFiles);
   });
 }

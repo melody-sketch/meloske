@@ -40,8 +40,11 @@ export const saveFile = (fileName: string, fileText: string): void => {
   }
 };
 
-export const readdirRecursive = (dir: string): string[] => {
-  const _readdirRecursive = (root: string, pathFromRoot: string): string[] => {
+export const readdirRecursiveSync = (dir: string): string[] => {
+  const _readdirRecursiveSync = (
+    root: string,
+    pathFromRoot: string
+  ): string[] => {
     let dirents: fs.Dirent[] = [];
     try {
       dirents = fs.readdirSync(path.join(root, pathFromRoot), {
@@ -55,16 +58,16 @@ export const readdirRecursive = (dir: string): string[] => {
     const files: string[] = dirents.flatMap((dirent) =>
       dirent.isFile()
         ? [path.join(pathFromRoot, dirent.name)]
-        : _readdirRecursive(root, path.join(pathFromRoot, dirent.name))
+        : _readdirRecursiveSync(root, path.join(pathFromRoot, dirent.name))
     );
     return files;
   };
 
-  return _readdirRecursive(dir, "");
+  return _readdirRecursiveSync(dir, "");
 };
 
 export const copydir = (src: string, dest: string): void => {
-  const srcFiles = readdirRecursive(src);
+  const srcFiles = readdirRecursiveSync(src);
   const srcBasename = path.basename(src);
 
   try {
