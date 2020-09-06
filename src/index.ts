@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import Store from "electron-store";
-import { copydir, FILE_EVENTS, readdirRecursiveSync } from "./fileIO";
+import { copydir, readdirRecursiveSync } from "./fileIO";
 
 const DEFAULT_LIBRARY_DIR: string = "./library";
 const HTML_PATH: string = `file://${__dirname}/scripts/index.html`;
@@ -33,32 +33,21 @@ function createWindow() {
   // 検証ツールを開く
   win.webContents.openDevTools();
 
-  win.webContents.on("did-finish-load", () => {
-    const libFiles = readdirRecursiveSync(libraryDir);
-    console.log("lib files:", libFiles);
-    win!.webContents.send(FILE_EVENTS.READ_DIR, libFiles);
+  ipcMain.handle("read_library", async (_) => {
+    return readdirRecursiveSync(libraryDir);
   });
 
-  ipcMain.on(FILE_EVENTS.READ_DIR, (_) => {
-    if (win === null) return;
-    const libFiles = readdirRecursiveSync(libraryDir);
-    win.webContents.send(FILE_EVENTS.READ_DIR, libFiles);
-  });
-
-  ipcMain.on("open_dir_dialog", (_) => {
-    if (win === null) return;
-
+  ipcMain.handle("open_dir_dialog", async (_) => {
     const dirs: string[] | undefined = dialog.showOpenDialogSync(win, {
       title: "ディレクトリを追加",
       properties: ["openDirectory"],
     });
 
-    if (dirs === undefined) return;
+    if (dirs === undefined) return undefined;
 
     copydir(dirs[0], libraryDir);
     console.log("open_dir_dialog:", dirs);
-    const libFiles = readdirRecursiveSync(libraryDir);
-    win.webContents.send("add_dir_to_library", libFiles);
+    return readdirRecursiveSync(libraryDir);
   });
 }
 

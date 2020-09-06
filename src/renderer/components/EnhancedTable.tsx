@@ -13,7 +13,6 @@ import AddIcon from "@material-ui/icons/Add";
 import SearchIcon from "@material-ui/icons/Search";
 import { ipcRenderer } from "electron";
 import React, { useEffect } from "react";
-import { FILE_EVENTS } from "../../fileIO";
 
 interface Data {
   id: number;
@@ -172,19 +171,11 @@ export default function EnhancedTable() {
     },
   });
 
+  // 最初に１回だけ、ライブラリにあるファイルを読み込む
   useEffect(() => {
-    ipcRenderer.on(FILE_EVENTS.READ_DIR, (_, libFiles: string[]) => {
+    ipcRenderer.invoke("read_library").then((libFiles) => {
       setRows(createData(libFiles));
     });
-
-    ipcRenderer.on("add_dir_to_library", (_, libFiles: string[]) => {
-      setRows(createData(libFiles));
-    });
-
-    return (): void => {
-      ipcRenderer.removeAllListeners(FILE_EVENTS.READ_DIR);
-      ipcRenderer.removeAllListeners("add_dir_to_library");
-    };
   }, []);
 
   const handleRequestSort = (
@@ -240,7 +231,9 @@ export default function EnhancedTable() {
   const handleBtnClick = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
-    ipcRenderer.send("open_dir_dialog");
+    ipcRenderer.invoke("open_dir_dialog").then((libFiles) => {
+      setRows(createData(libFiles));
+    });
   };
 
   const isSelected = (data: Data) => selected.indexOf(data) !== -1;
