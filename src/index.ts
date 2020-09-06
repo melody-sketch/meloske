@@ -1,5 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import Store from "electron-store";
+import fs from "fs";
 import { copydirSync, readdirRecursive, readdirRecursiveSync } from "./fileIO";
 
 const DEFAULT_LIBRARY_DIR: string = "./library";
@@ -16,6 +17,10 @@ const store = new Store<StoreType>({
 });
 
 const libraryDir = store.get("libraryDir");
+if (!fs.existsSync(libraryDir)) {
+  fs.mkdirSync(libraryDir);
+  console.log("make library dir", libraryDir);
+}
 
 function createWindow() {
   const win = new BrowserWindow({
