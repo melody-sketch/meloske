@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import Store from "electron-store";
-import { copydir, readdirRecursiveSync } from "./fileIO";
+import { copydirSync, readdirRecursive, readdirRecursiveSync } from "./fileIO";
 
 const DEFAULT_LIBRARY_DIR: string = "./library";
 const HTML_PATH: string = `file://${__dirname}/scripts/index.html`;
@@ -34,7 +34,8 @@ function createWindow() {
   win.webContents.openDevTools();
 
   ipcMain.handle("read_library", async (_) => {
-    return readdirRecursiveSync(libraryDir);
+    const libFiles = await readdirRecursive(libraryDir);
+    return libFiles;
   });
 
   ipcMain.handle("open_dir_dialog", async (_) => {
@@ -45,7 +46,7 @@ function createWindow() {
 
     if (dirs === undefined) return undefined;
 
-    copydir(dirs[0], libraryDir);
+    copydirSync(dirs[0], libraryDir);
     console.log("open_dir_dialog:", dirs);
     return readdirRecursiveSync(libraryDir);
   });

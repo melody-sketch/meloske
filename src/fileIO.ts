@@ -6,15 +6,9 @@ export const readdirRecursiveSync = (dir: string): string[] => {
     root: string,
     pathFromRoot: string
   ): string[] => {
-    let dirents: fs.Dirent[] = [];
-    try {
-      dirents = fs.readdirSync(path.join(root, pathFromRoot), {
-        withFileTypes: true,
-      });
-    } catch (err) {
-      console.error(err);
-      console.error("root:", root, ", pathFromRoot:", pathFromRoot);
-    }
+    const dirents: fs.Dirent[] = fs.readdirSync(path.join(root, pathFromRoot), {
+      withFileTypes: true,
+    });
 
     const files: string[] = dirents.flatMap((dirent) =>
       dirent.isFile()
@@ -27,7 +21,40 @@ export const readdirRecursiveSync = (dir: string): string[] => {
   return _readdirRecursiveSync(dir, "");
 };
 
-export const copydir = (src: string, dest: string): void => {
+export const readdirRecursive = (dir: string): Promise<string[]> => {
+  const _readdirRecursive = async (
+    root: string,
+    pathFromRoot: string
+  ): Promise<string[]> => {
+    const dirents: fs.Dirent[] = await fs.promises.readdir(
+      path.join(root, pathFromRoot),
+      {
+        withFileTypes: true,
+      }
+    );
+
+    var files: string[] = [];
+    for (const dirent of dirents) {
+      if (dirent.isFile()) {
+        files.push(path.join(pathFromRoot, dirent.name));
+      } else {
+        const innerFiles: string[] = await _readdirRecursive(
+          root,
+          path.join(pathFromRoot, dirent.name)
+        );
+        files = files.concat(innerFiles);
+      }
+    }
+
+    return files;
+  };
+
+  return new Promise<string[]>((resolve) => {
+    resolve(_readdirRecursive(dir, ""));
+  });
+};
+
+export const copydirSync = (src: string, dest: string): void => {
   const srcFiles = readdirRecursiveSync(src);
   const srcBasename = path.basename(src);
 
