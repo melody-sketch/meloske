@@ -1,12 +1,27 @@
+import {
+  IntegratedFiltering,
+  IntegratedSorting,
+  SearchState,
+  SelectionState,
+  SortingState,
+} from "@devexpress/dx-react-grid";
+import {
+  ColumnChooser,
+  Grid,
+  SearchPanel,
+  TableColumnResizing,
+  TableColumnVisibility,
+  TableHeaderRow,
+  TableSelection,
+  Toolbar,
+  VirtualTable,
+} from "@devexpress/dx-react-grid-material-ui";
 import { CircularProgress } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { ipcRenderer } from "electron";
-import React, { useEffect } from "react";
-import LibraryTable from "./LibraryTable";
+import React, { ReactText, useEffect, useState } from "react";
 
 export interface LibraryData {
-  id: number;
   name: string;
 }
 
@@ -14,56 +29,61 @@ function createDataList(files: string[]): Promise<LibraryData[]> {
   return new Promise((resolve) => {
     const data: LibraryData[] = [];
     for (let i = 0; i < files.length; i++) {
-      data.push({ id: i, name: files[i] });
+      data.push({ name: files[i] });
     }
     resolve(data);
   });
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      width: "100%",
-      height: "100%",
-    },
-    paper: {
-      width: "100%",
-      height: "100%",
-    },
-  })
-);
-
 export default function LibraryManager() {
-  const classes = useStyles();
-
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [libraryDataList, setLibraryDataList] = React.useState<LibraryData[]>(
-    []
-  );
+  const [columns] = useState([{ name: "name", title: "ファイル名" }]);
+  const [rows, setRows] = useState<LibraryData[]>([]);
+  const [selection, setSelection] = useState<ReactText[]>([]);
+  const [defaultColumnWidths] = useState([{ columnName: "name", width: 300 }]);
+  const [defaultHiddenColumnNames] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   // 最初に１回だけ、ライブラリにあるファイルを読み込む
   useEffect(() => {
     ipcRenderer
       .invoke("read_library")
-      .then((libFiles) => {
+      .then((libraryFiles) => {
         console.log('useEffect - ipcRenderer.invoke("read_library") =>');
-        return createDataList(libFiles);
+        return createDataList(libraryFiles);
       })
       .then((dataList) => {
-        setLibraryDataList(dataList);
+        setRows(dataList);
         setLoading(false);
       });
   }, []);
-
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper} variant="outlined">
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          <LibraryTable libraryDataList={libraryDataList} />
-        )}
-      </Paper>
-    </div>
+    <Paper>
+      {loading ? (
+        <CircularProgress />
+      ) : (
+        <Grid rows={rows} columns={columns}>
+          <SelectionState
+            selection={selection}
+            onSelectionChange={setSelection}
+          />
+          <SearchState defaultValue="" />
+          <IntegratedFiltering />
+          <SortingState
+            defaultSorting={[{ columnName: "name", direction: "asc" }]}
+          />
+          <IntegratedSorting />
+          <VirtualTable />
+          <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
+          <TableHeaderRow showSortingControls />
+          <TableSelection selectByRowClick />
+          <TableColumnVisibility
+            defaultHiddenColumnNames={defaultHiddenColumnNames}
+          />
+          <Toolbar />
+          <SearchPanel />
+          <ColumnChooser />
+        </Grid>
+      )}
+    </Paper>
   );
 }
