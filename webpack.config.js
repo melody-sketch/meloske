@@ -16,9 +16,14 @@ var main = {
   module: {
     rules: [
       {
-        test: /.ts?$/,
-        include: [path.resolve(__dirname, "src")],
-        exclude: [path.resolve(__dirname, "node_modules")],
+        test: /.tsx?$/,
+        include: [
+          path.resolve(__dirname, "src")
+        ],
+        exclude: [
+          path.resolve(__dirname, "node_modules"),
+          path.resolve(__dirname, "dist")
+        ],
         loader: "ts-loader",
       },
     ],
@@ -42,8 +47,8 @@ var renderer = {
   module: {
     rules: [
       {
-        test: /\.(tsx|ts)$/,
-        use: ["ts-loader"],
+        test: /\.tsx?$/,
+        loader: "ts-loader",
         include: [
           path.resolve(__dirname, "src"),
           path.resolve(__dirname, "node_modules"),

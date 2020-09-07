@@ -1,0 +1,55 @@
+{
+    "env": {
+        "browser": true,
+        "node": true,
+        "es2020": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "prettier/@typescript-eslint",
+        "prettier/react"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": "./tsconfig.json",
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "plugins": [
+        "react",
+        "react-hooks",
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "react/prop-types": "off",
+        "react/jsx-fragments": [
+            "error",
+            "element"
+        ],
+        "react/jsx-no-target-blank": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error"
+    },
+    "settings": {
+        "react": {
+          "createClass": "createReactClass",
+          "pragma": "React",
+          "version": "detect",
+          "flowVersion": "0.53"
+        },
+        "linkComponents": [
+            "Hyperlink",
+            {
+                "name": "Link",
+                "linkAttribute": "to"
+            }
+        ]
+    }
+}
