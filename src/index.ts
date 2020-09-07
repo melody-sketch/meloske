@@ -38,12 +38,12 @@ function createWindow() {
   // 検証ツールを開く
   win.webContents.openDevTools();
 
-  ipcMain.handle('read_library', async (_) => {
+  ipcMain.handle('read_library', async () => {
     const libFiles = await readdirRecursive(libraryDir);
     return libFiles;
   });
 
-  ipcMain.handle('open_dir_dialog', async (_) => {
+  ipcMain.handle('open_dir_dialog', async () => {
     const dirs: string[] | undefined = dialog.showOpenDialogSync(win, {
       title: 'ディレクトリを追加',
       properties: ['openDirectory'],

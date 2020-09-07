@@ -35,7 +35,8 @@ function createDataList(files: string[]): Promise<LibraryData[]> {
   });
 }
 
-export default function LibraryManager() {
+// TODO: 返り値ちゃんと定義する
+export default function LibraryManager(): JSX.Element {
   const [columns] = useState([{ name: 'name', title: 'ファイル名' }]);
   const [rows, setRows] = useState<LibraryData[]>([]);
   const [selection, setSelection] = useState<ReactText[]>([]);
