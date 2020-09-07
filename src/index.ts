@@ -1,10 +1,10 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
-import Store from "electron-store";
-import fs from "fs";
-import { copydirSync, readdirRecursive, readdirRecursiveSync } from "./fileIO";
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import Store from 'electron-store';
+import fs from 'fs';
+import { copydirSync, readdirRecursive, readdirRecursiveSync } from './fileIO';
 
-const DEFAULT_LIBRARY_DIR: string = "./library";
-const HTML_PATH: string = `file://${__dirname}/scripts/index.html`;
+const DEFAULT_LIBRARY_DIR = './library';
+const HTML_PATH = `file://${__dirname}/scripts/index.html`;
 
 type StoreType = {
   libraryDir: string;
@@ -16,10 +16,10 @@ const store = new Store<StoreType>({
   },
 });
 
-const libraryDir = store.get("libraryDir");
+const libraryDir = store.get('libraryDir');
 if (!fs.existsSync(libraryDir)) {
   fs.mkdirSync(libraryDir);
-  console.log("make library dir", libraryDir);
+  console.log('make library dir', libraryDir);
 }
 
 function createWindow() {
@@ -32,40 +32,40 @@ function createWindow() {
   });
 
   // index.html を開く
-  console.log("index.html Path:", HTML_PATH);
+  console.log('index.html Path:', HTML_PATH);
   win.loadURL(HTML_PATH);
 
   // 検証ツールを開く
   win.webContents.openDevTools();
 
-  ipcMain.handle("read_library", async (_) => {
+  ipcMain.handle('read_library', async (_) => {
     const libFiles = await readdirRecursive(libraryDir);
     return libFiles;
   });
 
-  ipcMain.handle("open_dir_dialog", async (_) => {
+  ipcMain.handle('open_dir_dialog', async (_) => {
     const dirs: string[] | undefined = dialog.showOpenDialogSync(win, {
-      title: "ディレクトリを追加",
-      properties: ["openDirectory"],
+      title: 'ディレクトリを追加',
+      properties: ['openDirectory'],
     });
 
     if (dirs === undefined) return undefined;
 
     copydirSync(dirs[0], libraryDir);
-    console.log("open_dir_dialog:", dirs);
+    console.log('open_dir_dialog:', dirs);
     return readdirRecursiveSync(libraryDir);
   });
 }
 
 app.whenReady().then(createWindow);
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on("activate", () => {
+app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }

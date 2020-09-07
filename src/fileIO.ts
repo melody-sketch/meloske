@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from 'fs';
+import path from 'path';
 
 export const readdirRecursiveSync = (dir: string): string[] => {
   const _readdirRecursiveSync = (
@@ -18,7 +18,7 @@ export const readdirRecursiveSync = (dir: string): string[] => {
     return files;
   };
 
-  return _readdirRecursiveSync(dir, "");
+  return _readdirRecursiveSync(dir, '');
 };
 
 export const readdirRecursive = (dir: string): Promise<string[]> => {
@@ -33,7 +33,7 @@ export const readdirRecursive = (dir: string): Promise<string[]> => {
       }
     );
 
-    var files: string[] = [];
+    let files: string[] = [];
     for (const dirent of dirents) {
       if (dirent.isFile()) {
         files.push(path.join(pathFromRoot, dirent.name));
@@ -50,7 +50,7 @@ export const readdirRecursive = (dir: string): Promise<string[]> => {
   };
 
   return new Promise<string[]>((resolve) => {
-    resolve(_readdirRecursive(dir, ""));
+    resolve(_readdirRecursive(dir, ''));
   });
 };
 
