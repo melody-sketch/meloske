@@ -41,7 +41,10 @@ interface LibraryManagerProps {
   >;
 }
 
-export default function LibraryManager(props: LibraryManagerProps) {
+// TODO: 返り値の型を定義する
+export default function LibraryManager(
+  props: LibraryManagerProps
+): JSX.Element {
   const { setSelectedData } = props;
 
   const [columns] = useState([{ name: 'name', title: 'ファイル名' }]);
@@ -73,7 +76,7 @@ export default function LibraryManager(props: LibraryManagerProps) {
     } else {
       setSelectedData(undefined);
     }
-  }, [selection]);
+  }, [rows, selection, setSelectedData]);
 
   return (
     <Paper>
