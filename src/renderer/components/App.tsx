@@ -1,13 +1,13 @@
-import { Container } from "@material-ui/core";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import React, { useState } from "react";
-import LibraryManager, { LibraryData } from "./LibraryManager";
+import { Container } from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import React, { useState } from 'react';
+import LibraryManager, { LibraryData } from './LibraryManager';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: "100%",
-      height: "560px",
+      width: '100%',
+      height: '560px',
     },
   })
 );
@@ -18,7 +18,7 @@ export default function App() {
     undefined
   );
 
-  console.log("selectedData", selectedData);
+  console.log('selectedData', selectedData);
 
   return (
     <Container className={classes.container}>

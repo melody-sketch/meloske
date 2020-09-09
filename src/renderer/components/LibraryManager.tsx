@@ -3,8 +3,8 @@ import {
   IntegratedSorting,
   SearchState,
   SelectionState,
-  SortingState
-} from "@devexpress/dx-react-grid";
+  SortingState,
+} from '@devexpress/dx-react-grid';
 import {
   ColumnChooser,
   Grid,
@@ -14,12 +14,12 @@ import {
   TableHeaderRow,
   TableSelection,
   Toolbar,
-  VirtualTable
-} from "@devexpress/dx-react-grid-material-ui";
-import { CircularProgress } from "@material-ui/core";
-import Paper from "@material-ui/core/Paper";
-import { ipcRenderer } from "electron";
-import React, { ReactText, useEffect, useState } from "react";
+  VirtualTable,
+} from '@devexpress/dx-react-grid-material-ui';
+import { CircularProgress } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper';
+import { ipcRenderer } from 'electron';
+import React, { ReactText, useEffect, useState } from 'react';
 
 export interface LibraryData {
   name: string;
@@ -44,17 +44,17 @@ interface LibraryManagerProps {
 export default function LibraryManager(props: LibraryManagerProps) {
   const { setSelectedData } = props;
 
-  const [columns] = useState([{ name: "name", title: "ファイル名" }]);
+  const [columns] = useState([{ name: 'name', title: 'ファイル名' }]);
   const [rows, setRows] = useState<LibraryData[]>([]);
   const [selection, setSelection] = useState<ReactText[]>([]);
-  const [defaultColumnWidths] = useState([{ columnName: "name", width: 300 }]);
+  const [defaultColumnWidths] = useState([{ columnName: 'name', width: 300 }]);
   const [defaultHiddenColumnNames] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   // 最初に１回だけ、ライブラリにあるファイルを読み込む
   useEffect(() => {
     ipcRenderer
-      .invoke("read_library")
+      .invoke('read_library')
       .then((libraryFiles) => {
         console.log('useEffect - ipcRenderer.invoke("read_library") =>');
         return createDataList(libraryFiles);
@@ -65,11 +65,11 @@ export default function LibraryManager(props: LibraryManagerProps) {
       });
   }, []);
 
-  console.log("selection:", selection);
+  console.log('selection:', selection);
 
   useEffect(() => {
     if (selection.length === 1) {
-      if (typeof selection[0] == "number") setSelectedData(rows[selection[0]]);
+      if (typeof selection[0] == 'number') setSelectedData(rows[selection[0]]);
     } else {
       setSelectedData(undefined);
     }
@@ -88,7 +88,7 @@ export default function LibraryManager(props: LibraryManagerProps) {
           <SearchState defaultValue="" />
           <IntegratedFiltering />
           <SortingState
-            defaultSorting={[{ columnName: "name", direction: "asc" }]}
+            defaultSorting={[{ columnName: 'name', direction: 'asc' }]}
           />
           <IntegratedSorting />
           <VirtualTable />
